@@ -1,26 +1,55 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import DocumentationProvider from './DocumentationProvider';
+import DocumentationNode from './DocumentationNode';
+import axios from 'axios';
+import {HTMLElement, parse} from 'node-html-parser';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "ffmpeg-documentation" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('ffmpeg-documentation.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Ffmpeg documentation!');
-	});
-
-	context.subscriptions.push(disposable);
+function createTree(root: DocumentationNode, nodes: HTMLElement[] | undefined) {
+	if (!nodes) return;
+	nodes.forEach(node => {
+		const text = node.querySelector('a')?.text as string;
+		const documentationNode = new DocumentationNode(text);
+		root.addChild(documentationNode);	// Add current node to it's parrent
+		
+		const children = node.querySelector(":scope > ul")?.querySelectorAll(':scope > li');	// Nodes with children have ul element
+		if (children && children.length > 0) {
+			createTree(documentationNode, children);
+		}
+	})
 }
 
-// this method is called when your extension is deactivated
+async function parseDocumentation(): Promise<DocumentationNode | undefined> {
+	try{
+		const rawHtml = await axios.get('https://ffmpeg.org/ffmpeg-filters.html');
+		const root = parse(rawHtml.data);
+	
+		const tableOfContents = root.querySelector(".contents")?.querySelector('ul');
+		
+		const nodes = tableOfContents?.querySelectorAll(":scope > li");
+
+		const rootNode = new DocumentationNode('Ffmpeg filters');
+		rootNode.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+		createTree(rootNode, nodes);
+		
+		return rootNode;
+	} catch(error) {
+		console.error(`Got an error while parsing documentation: ${error}`);
+		vscode.window.showErrorMessage(`Got an error while parsing documentation: ${error}`)
+	}
+	return undefined;
+}
+
+export function activate(context: vscode.ExtensionContext) {
+	console.log('Congratulations, your extension "ffmpeg-documentation" is now active!');
+
+	const documentationProvider = new DocumentationProvider();
+	vscode.window.registerTreeDataProvider('main-view', documentationProvider);
+
+	context.subscriptions.push(vscode.commands.registerCommand('ffmpeg-documentation.refresh-data', async () => {
+		const rootNode = await parseDocumentation();
+		documentationProvider.setRootNode(rootNode);
+		documentationProvider.refresh();
+	}));
+}
+
 export function deactivate() {}
