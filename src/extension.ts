@@ -39,17 +39,20 @@ async function parseDocumentation(): Promise<DocumentationNode | undefined> {
 	return undefined;
 }
 
+async function refreshDocumentation(provider: DocumentationProvider) {
+	console.log('Refreshing documentation.');
+	const rootNode = await parseDocumentation();
+	provider.setRootNode(rootNode);
+	provider.refresh();
+}
+
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "ffmpeg-documentation" is now active!');
 
 	const documentationProvider = new DocumentationProvider();
 	vscode.window.registerTreeDataProvider('main-view', documentationProvider);
-
-	context.subscriptions.push(vscode.commands.registerCommand('ffmpeg-documentation.refresh-data', async () => {
-		const rootNode = await parseDocumentation();
-		documentationProvider.setRootNode(rootNode);
-		documentationProvider.refresh();
-	}));
+	context.subscriptions.push(vscode.commands.registerCommand('ffmpeg-documentation.refresh-data', refreshDocumentation));
+	vscode.commands.executeCommand('ffmpeg-documentation.refresh-data', documentationProvider);
 }
 
 export function deactivate() {}
