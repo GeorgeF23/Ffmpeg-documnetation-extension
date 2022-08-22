@@ -11,7 +11,8 @@
   ],
   "activationEvents": [
     "onView:main-view",
-    "onCommand:ffmpeg-documentation.refresh-data"
+    "onCommand:ffmpeg-documentation.refresh-data",
+    "onCommand:ffmpeg-documentation.open-filter-webview"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -40,6 +41,14 @@
           "dark": "resources/dark/refresh.svg",
           "light": "resources/light/refresh.svg"
         }
+      },
+      {
+        "command": "ffmpeg-documentation.open-filter-webview",
+        "title": "Ffmpeg documentation: Open filter webview",
+        "icon": {
+          "dark": "resources/dark/book.svg",
+          "light": "resources/light/book.svg"
+        }
       }
     ],
     "menus": {
@@ -48,6 +57,13 @@
           "command": "ffmpeg-documentation.refresh-data",
           "when": "view == main-view",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "ffmpeg-documentation.open-filter-webview",
+          "when": "viewItem == href",
+          "group": "inline"
         }
       ]
     }

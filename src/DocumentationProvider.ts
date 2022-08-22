@@ -5,11 +5,11 @@ import DocumentationNode from './DocumentationNode';
 export default class DocumentationProvider implements vscode.TreeDataProvider<DocumentationNode> {
   
   private rootNode: DocumentationNode | undefined;
-  private html: string | undefined;
+  private html: string;
 
   constructor(rootNode?: DocumentationNode, html?: string) {
     this.rootNode = rootNode;
-    this.html = html;
+    this.html = html ?? "";
   }
 
   setRootNode(newRootNode?: DocumentationNode) {
@@ -17,7 +17,11 @@ export default class DocumentationProvider implements vscode.TreeDataProvider<Do
   }
 
   setHtml(html?: string) {
-    this.html = html;
+    this.html = html ?? "";
+  }
+
+  getHtml() {
+    return this.html;
   }
 
   getTreeItem(element: DocumentationNode): vscode.TreeItem {

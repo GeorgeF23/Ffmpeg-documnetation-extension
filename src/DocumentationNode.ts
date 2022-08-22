@@ -3,11 +3,13 @@ import * as vscode from 'vscode';
 export default class DocumentationNode extends vscode.TreeItem {
     private children: DocumentationNode[];
 
-    constructor(label: string) {
+    constructor(id: string | undefined, label: string) {
         super(label, vscode.TreeItemCollapsibleState.None);
 
         this.label = label;
         this.children = [];
+        super.contextValue = "href"
+        super.id = id;
     }
 
     addChild(child: DocumentationNode) {

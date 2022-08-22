@@ -8,7 +8,8 @@ function createTree(root: DocumentationNode, nodes: HTMLElement[] | undefined) {
 	if (!nodes) return;
 	nodes.forEach(node => {
 		const text = node.querySelector('a')?.text as string;
-		const documentationNode = new DocumentationNode(text);
+		const id = node.querySelector('a')?.attrs['href'].substring(1);
+		const documentationNode = new DocumentationNode(id, text);
 		root.addChild(documentationNode);	// Add current node to it's parrent
 		
 		const children = node.querySelector(":scope > ul")?.querySelectorAll(':scope > li');	// Nodes with children have ul element
@@ -37,7 +38,7 @@ async function parseDocumentation(rawHtml: string): Promise<DocumentationNode | 
 		
 		const nodes = tableOfContents?.querySelectorAll(":scope > li");
 
-		const rootNode = new DocumentationNode('Ffmpeg filters');
+		const rootNode = new DocumentationNode(undefined, 'Ffmpeg filters');
 		rootNode.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
 		createTree(rootNode, nodes);
 		
@@ -58,13 +59,31 @@ async function refreshDocumentation(provider: DocumentationProvider) {
 	provider.refresh();
 }
 
-export function activate(context: vscode.ExtensionContext) {
+function openFiltersWebview(html: string, target?: string) {
+	const panel = vscode.window.createWebviewPanel(
+		'filters-webview',
+		'Filters documentation',
+		vscode.ViewColumn.Beside,
+		{
+			enableScripts: true
+		}
+	);
+	if (target) {
+		html += `<script>document.getElementById('${target}').scrollIntoView()</script>`
+	}
+	panel.webview.html = html;
+	
+}
+
+export async function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "ffmpeg-documentation" is now active!');
 
 	const documentationProvider = new DocumentationProvider();
 	vscode.window.registerTreeDataProvider('main-view', documentationProvider);
+	await refreshDocumentation(documentationProvider);
+
 	context.subscriptions.push(vscode.commands.registerCommand('ffmpeg-documentation.refresh-data', () => refreshDocumentation(documentationProvider)));
-	vscode.commands.executeCommand('ffmpeg-documentation.refresh-data');
+	context.subscriptions.push(vscode.commands.registerCommand('ffmpeg-documentation.open-filter-webview', (node?: DocumentationNode) => openFiltersWebview(documentationProvider.getHtml(), node?.id)));
 }
 
 export function deactivate() {}
