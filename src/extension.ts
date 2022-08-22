@@ -18,10 +18,20 @@ function createTree(root: DocumentationNode, nodes: HTMLElement[] | undefined) {
 	})
 }
 
-async function parseDocumentation(): Promise<DocumentationNode | undefined> {
+async function fetchDocumentation(): Promise<string> {
+	try {
+		const html = await axios.get('https://ffmpeg.org/ffmpeg-filters.html');
+		return html.data;
+	} catch (error) {
+		console.error(`Got an error while fetching documentation: ${error}`);
+		vscode.window.showErrorMessage(`Got an error while fetching documentation: ${error}`)
+		return "";
+	}
+}
+
+async function parseDocumentation(rawHtml: string): Promise<DocumentationNode | undefined> {
 	try{
-		const rawHtml = await axios.get('https://ffmpeg.org/ffmpeg-filters.html');
-		const root = parse(rawHtml.data);
+		const root = parse(rawHtml);
 	
 		const tableOfContents = root.querySelector(".contents")?.querySelector('ul');
 		
@@ -41,8 +51,10 @@ async function parseDocumentation(): Promise<DocumentationNode | undefined> {
 
 async function refreshDocumentation(provider: DocumentationProvider) {
 	console.log('Refreshing documentation.');
-	const rootNode = await parseDocumentation();
+	const html = await fetchDocumentation();
+	const rootNode = await parseDocumentation(html);
 	provider.setRootNode(rootNode);
+	provider.setHtml(html);
 	provider.refresh();
 }
 
