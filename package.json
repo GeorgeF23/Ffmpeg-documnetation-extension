@@ -28,16 +28,29 @@
       "main-container": [
         {
           "id": "main-view",
-          "name": ""
+          "name": "Filters documentation"
         }
       ]
     },
     "commands": [
       {
         "command": "ffmpeg-documentation.refresh-data",
-        "title": "Ffmpeg documentation: Refresh documentation data"
+        "title": "Ffmpeg documentation: Refresh documentation data",
+        "icon": {
+          "dark": "resources/dark/refresh.svg",
+          "light": "resources/light/refresh.svg"
+        }
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "ffmpeg-documentation.refresh-data",
+          "when": "view == main-view",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

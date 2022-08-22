@@ -63,8 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const documentationProvider = new DocumentationProvider();
 	vscode.window.registerTreeDataProvider('main-view', documentationProvider);
-	context.subscriptions.push(vscode.commands.registerCommand('ffmpeg-documentation.refresh-data', refreshDocumentation));
-	vscode.commands.executeCommand('ffmpeg-documentation.refresh-data', documentationProvider);
+	context.subscriptions.push(vscode.commands.registerCommand('ffmpeg-documentation.refresh-data', () => refreshDocumentation(documentationProvider)));
+	vscode.commands.executeCommand('ffmpeg-documentation.refresh-data');
 }
 
 export function deactivate() {}
