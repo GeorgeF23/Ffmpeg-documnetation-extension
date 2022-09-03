@@ -31,7 +31,7 @@ export default class TreeProvider
 
   getChildren(element?: TreeNode | undefined): vscode.ProviderResult<TreeNode[]> {
     if (!element) {
-      return [this.rootNode as TreeNode];
+      return this.rootNode?.getChildren();
     } else {
       return element.getChildren();
     }

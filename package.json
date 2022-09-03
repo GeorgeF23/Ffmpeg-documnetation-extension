@@ -29,6 +29,10 @@
       "main-container": [
         {
           "id": "main-view",
+          "name": "Main documentation"
+        },
+        {
+          "id": "filters-view",
           "name": "Filters documentation"
         }
       ]

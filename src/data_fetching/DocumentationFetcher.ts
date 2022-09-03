@@ -61,7 +61,7 @@ export class DocumentationFetcher {
   
       const nodes = tableOfContents?.querySelectorAll(":scope > li");
   
-      const rootNode = new TreeNode(undefined, "Ffmpeg filters");
+      const rootNode = new TreeNode(undefined, "Root node");
       rootNode.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
       this.createTree(rootNode, nodes);
   
