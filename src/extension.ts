@@ -18,7 +18,7 @@ function openFiltersWebview(html: string, target?: string) {
   panel.webview.html = html;
 }
 
-function refreshFetcjers(fetchers: DocumentationFetcher[]) {
+function refreshFetchers(fetchers: DocumentationFetcher[]) {
   for (const f of fetchers) {
     f.refreshDocumentation();
   }
@@ -45,10 +45,10 @@ export async function activate(context: vscode.ExtensionContext) {
   const filterFetcher = new DocumentationFetcher('filter', 'https://ffmpeg.org/ffmpeg-filters.html');
   const fetchers = [mainFetcher, filterFetcher];
 
-  refreshFetcjers(fetchers);
+  refreshFetchers(fetchers);
   context.subscriptions.push(
     vscode.commands.registerCommand("ffmpeg-documentation.refresh-data", () => {
-      refreshFetcjers(fetchers);
+      refreshFetchers(fetchers);
       vscode.window.showInformationMessage('Refreshing documentation data...');
     })
   );
