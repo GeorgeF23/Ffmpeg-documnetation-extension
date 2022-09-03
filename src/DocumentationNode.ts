@@ -1,23 +1,23 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 export default class DocumentationNode extends vscode.TreeItem {
-    private children: DocumentationNode[];
+  private children: DocumentationNode[];
 
-    constructor(id: string | undefined, label: string) {
-        super(label, vscode.TreeItemCollapsibleState.None);
+  constructor(id: string | undefined, label: string) {
+    super(label, vscode.TreeItemCollapsibleState.None);
 
-        this.label = label;
-        this.children = [];
-        super.contextValue = "href"
-        super.id = id;
-    }
+    this.label = label;
+    this.children = [];
+    super.contextValue = "href";
+    super.id = id;
+  }
 
-    addChild(child: DocumentationNode) {
-        this.children.push(child);
-        super.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-    }
+  addChild(child: DocumentationNode) {
+    this.children.push(child);
+    super.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+  }
 
-    getChildren(): DocumentationNode[] {
-        return this.children;
-    }
+  getChildren(): DocumentationNode[] {
+    return this.children;
+  }
 }
