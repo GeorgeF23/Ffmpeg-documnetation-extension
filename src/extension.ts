@@ -47,9 +47,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   refreshFetcjers(fetchers);
   context.subscriptions.push(
-    vscode.commands.registerCommand("ffmpeg-documentation.refresh-data", () =>
-      refreshFetcjers(fetchers)
-    )
+    vscode.commands.registerCommand("ffmpeg-documentation.refresh-data", () => {
+      refreshFetcjers(fetchers);
+      vscode.window.showInformationMessage('Refreshing documentation data...');
+    })
   );
 
   hookFetchersWebviews(context, fetchers);

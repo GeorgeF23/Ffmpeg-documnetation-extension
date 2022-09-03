@@ -41,33 +41,24 @@
       {
         "command": "ffmpeg-documentation.refresh-data",
         "title": "Ffmpeg documentation: Refresh documentation data",
-        "icon": {
-          "dark": "resources/dark/refresh.svg",
-          "light": "resources/light/refresh.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "ffmpeg-documentation.open-filter-webview",
         "title": "Ffmpeg documentation: Open filter webview",
-        "icon": {
-          "dark": "resources/dark/book.svg",
-          "light": "resources/light/book.svg"
-        }
+        "icon": "$(book)"
       },
       {
         "command": "ffmpeg-documentation.open-main-webview",
         "title": "Ffmpeg documentation: Open main webview",
-        "icon": {
-          "dark": "resources/dark/book.svg",
-          "light": "resources/light/book.svg"
-        }
+        "icon": "$(book)"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "ffmpeg-documentation.refresh-data",
-          "when": "view == main-view",
+          "when": "view == main-view || view == filter-view",
           "group": "navigation"
         }
       ],
