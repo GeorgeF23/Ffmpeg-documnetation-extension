@@ -31,7 +31,7 @@ function hookFetchersWebviews(context: vscode.ExtensionContext, fetchers: Docume
         `ffmpeg-documentation.open-${f.getId()}-webview`,
         (node?: TreeNode) => openFiltersWebview(f.getProvider().getHtml(), node?.id)
       )
-    )
+    );
   }
 }
 

@@ -8,9 +8,6 @@
   "plugins": [
     "@typescript-eslint"
   ],
-  "extends": [
-    "plugin:prettier/recommended"
-  ],
   "rules": {
     "@typescript-eslint/naming-convention": "warn",
     "@typescript-eslint/semi": "warn",
@@ -23,12 +20,5 @@
     "out",
     "dist",
     "**/*.d.ts"
-  ],
-  "max-line-length": [
-    true,
-    {
-      "limit": 140,
-      "ignore-pattern": "^import |^export {(.*?)}"
-    }
   ]
 }
