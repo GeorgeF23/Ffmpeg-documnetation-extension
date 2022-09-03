@@ -5,8 +5,8 @@ import { DocumentationFetcher } from "./data_fetching/DocumentationFetcher";
 
 function openFiltersWebview(html: string, target?: string) {
   const panel = vscode.window.createWebviewPanel(
-    "filters-webview",
-    "Filters documentation",
+    "ffmpeg-webview",
+    "Ffmpeg documentation" + (target ? `: ${target}` : ''),
     vscode.ViewColumn.Beside,
     {
       enableScripts: true,
@@ -18,25 +18,42 @@ function openFiltersWebview(html: string, target?: string) {
   panel.webview.html = html;
 }
 
+function refreshFetcjers(fetchers: DocumentationFetcher[]) {
+  for (const f of fetchers) {
+    f.refreshDocumentation();
+  }
+}
+
+function hookFetchersWebviews(context: vscode.ExtensionContext, fetchers: DocumentationFetcher[]) {
+  for (const f of fetchers) {
+    context.subscriptions.push(
+      vscode.commands.registerCommand(
+        `ffmpeg-documentation.open-${f.getId()}-webview`,
+        (node?: TreeNode) => openFiltersWebview(f.getProvider().getHtml(), node?.id)
+      )
+    )
+  }
+}
+
 export async function activate(context: vscode.ExtensionContext) {
   console.log(
-    'Congratulations, your extension "ffmpeg-documentation" is now active!'
+    'Extension "ffmpeg-documentation" is now active!'
   );
 
-  const mainFetcher = new DocumentationFetcher('https://www.ffmpeg.org/ffmpeg.html', 'main-view');
-  mainFetcher.refreshDocumentation();
+  
+  const mainFetcher = new DocumentationFetcher('main', 'https://www.ffmpeg.org/ffmpeg.html');
+  const filterFetcher = new DocumentationFetcher('filter', 'https://ffmpeg.org/ffmpeg-filters.html');
+  const fetchers = [mainFetcher, filterFetcher];
+
+  refreshFetcjers(fetchers);
   context.subscriptions.push(
     vscode.commands.registerCommand("ffmpeg-documentation.refresh-data", () =>
-      mainFetcher.refreshDocumentation()
+      refreshFetcjers(fetchers)
     )
   );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "ffmpeg-documentation.open-filter-webview",
-      (node?: TreeNode) =>
-        openFiltersWebview(mainFetcher.getProvider().getHtml(), node?.id)
-    )
-  );
+
+  hookFetchersWebviews(context, fetchers);
+  
 }
 
 export function deactivate() {}

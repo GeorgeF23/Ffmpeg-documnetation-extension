@@ -32,7 +32,7 @@
           "name": "Main documentation"
         },
         {
-          "id": "filters-view",
+          "id": "filter-view",
           "name": "Filters documentation"
         }
       ]
@@ -53,6 +53,14 @@
           "dark": "resources/dark/book.svg",
           "light": "resources/light/book.svg"
         }
+      },
+      {
+        "command": "ffmpeg-documentation.open-main-webview",
+        "title": "Ffmpeg documentation: Open main webview",
+        "icon": {
+          "dark": "resources/dark/book.svg",
+          "light": "resources/light/book.svg"
+        }
       }
     ],
     "menus": {
@@ -66,7 +74,12 @@
       "view/item/context": [
         {
           "command": "ffmpeg-documentation.open-filter-webview",
-          "when": "viewItem == href",
+          "when": "viewItem == filter-href",
+          "group": "inline"
+        },
+        {
+          "command": "ffmpeg-documentation.open-main-webview",
+          "when": "viewItem == main-href",
           "group": "inline"
         }
       ]

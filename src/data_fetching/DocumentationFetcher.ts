@@ -7,14 +7,14 @@ import { HTMLElement, parse } from "node-html-parser";
 export class DocumentationFetcher {
   private url: string;
   private treeProvider: TreeProvider;
-  private view: string;
+  private id: string;
 
-  constructor(url: string, view: string) {
+  constructor(id: string, url: string) {
+    this.id = id;
     this.url = url;
     this.treeProvider = new TreeProvider();
-    this.view = view;
 
-    vscode.window.registerTreeDataProvider(this.view, this.treeProvider);
+    vscode.window.registerTreeDataProvider(`${this.id}-view`, this.treeProvider);
   }
 
   createTree(root: TreeNode, nodes: HTMLElement[] | undefined) {
@@ -23,8 +23,8 @@ export class DocumentationFetcher {
     }
     nodes.forEach((node) => {
       const text = node.querySelector("a")?.text as string;
-      const id = node.querySelector("a")?.attrs["href"].substring(1);
-      const documentationNode = new TreeNode(id, text);
+      const nodeId = node.querySelector("a")?.attrs["href"].substring(1);
+      const documentationNode = new TreeNode(this.id, nodeId, text);
       root.addChild(documentationNode); // Add current node to it's parrent
   
       const children = node
@@ -61,7 +61,7 @@ export class DocumentationFetcher {
   
       const nodes = tableOfContents?.querySelectorAll(":scope > li");
   
-      const rootNode = new TreeNode(undefined, "Root node");
+      const rootNode = new TreeNode(this.id, undefined, "Root node");
       rootNode.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
       this.createTree(rootNode, nodes);
   
@@ -86,5 +86,9 @@ export class DocumentationFetcher {
 
   getProvider(): TreeProvider {
     return this.treeProvider;
+  }
+
+  getId(): string {
+    return this.id;
   }
 }
