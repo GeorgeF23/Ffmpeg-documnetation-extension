@@ -2,7 +2,7 @@
   "name": "ffmpeg-documentation",
   "displayName": "Ffmpeg documentation",
   "description": "This extension makes it easier to browse through the ffmpeg documention by integrating it in vs code directyle",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.70.0"
   },
