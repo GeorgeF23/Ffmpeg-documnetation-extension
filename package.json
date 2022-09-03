@@ -9,6 +9,11 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GeorgeF23/Ffmpeg-documnetation-extension"
+  },
+  "publisher": "george2304",
   "activationEvents": [
     "onView:main-view",
     "onCommand:ffmpeg-documentation.refresh-data",
