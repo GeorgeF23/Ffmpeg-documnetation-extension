@@ -1,17 +1,17 @@
 import * as vscode from "vscode";
-import DocumentationProvider from "./DocumentationProvider";
-import DocumentationNode from "./DocumentationNode";
+import TreeProvider from "./view/TreeProivder";
+import TreeNode from "./view/TreeNode";
 import axios from "axios";
 import { HTMLElement, parse } from "node-html-parser";
 
-function createTree(root: DocumentationNode, nodes: HTMLElement[] | undefined) {
+function createTree(root: TreeNode, nodes: HTMLElement[] | undefined) {
   if (!nodes) {
     return;
   }
   nodes.forEach((node) => {
     const text = node.querySelector("a")?.text as string;
     const id = node.querySelector("a")?.attrs["href"].substring(1);
-    const documentationNode = new DocumentationNode(id, text);
+    const documentationNode = new TreeNode(id, text);
     root.addChild(documentationNode); // Add current node to it's parrent
 
     const children = node
@@ -38,7 +38,7 @@ async function fetchDocumentation(): Promise<string> {
 
 async function parseDocumentation(
   rawHtml: string
-): Promise<DocumentationNode | undefined> {
+): Promise<TreeNode | undefined> {
   try {
     const root = parse(rawHtml);
 
@@ -48,7 +48,7 @@ async function parseDocumentation(
 
     const nodes = tableOfContents?.querySelectorAll(":scope > li");
 
-    const rootNode = new DocumentationNode(undefined, "Ffmpeg filters");
+    const rootNode = new TreeNode(undefined, "Ffmpeg filters");
     rootNode.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
     createTree(rootNode, nodes);
 
@@ -62,7 +62,7 @@ async function parseDocumentation(
   return undefined;
 }
 
-async function refreshDocumentation(provider: DocumentationProvider) {
+async function refreshDocumentation(provider: TreeProvider) {
   console.log("Refreshing documentation.");
   const html = await fetchDocumentation();
   const rootNode = await parseDocumentation(html);
@@ -91,7 +91,7 @@ export async function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "ffmpeg-documentation" is now active!'
   );
 
-  const documentationProvider = new DocumentationProvider();
+  const documentationProvider = new TreeProvider();
   vscode.window.registerTreeDataProvider("main-view", documentationProvider);
   await refreshDocumentation(documentationProvider);
 
@@ -103,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "ffmpeg-documentation.open-filter-webview",
-      (node?: DocumentationNode) =>
+      (node?: TreeNode) =>
         openFiltersWebview(documentationProvider.getHtml(), node?.id)
     )
   );
